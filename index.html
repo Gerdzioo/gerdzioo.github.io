@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Wyszukiwanie Produktów</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
+        input, button { padding: 10px; margin: 5px; font-size: 16px; }
+        ul { list-style-type: none; padding: 0; }
+        li { margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>Wyszukaj produkt</h1>
+    <input type="text" id="nazwa" placeholder="Wpisz nazwę produktu">
+    <button onclick="szukaj()">Szukaj</button>
+    
+    <h2>Wyniki:</h2>
+    <ul id="wyniki"></ul>
+    
+    <script>
+        // Dane produktów
+        const produkty = [
+            { nazwa: "Nitro x2", cena: 3500 },
+            { nazwa: "Nitro x5", cena: 6500 },
+            { nazwa: "Nitro x10", cena: 12000 },
+            { nazwa: "Zawieszenie hydrauliczne", cena: 21000 },
+            { nazwa: "Pro Spoiler", cena: 850 },
+            { nazwa: "Win Spoiler", cena: 1050 },
+            { nazwa: "Drag Spoiler", cena: 600 },
+            { nazwa: "Alpha Spoiler", cena: 600 },
+            { nazwa: "Champ Scoop Hood", cena: 1400 },
+            { nazwa: "Fury Scoop Hood", cena: 1950 },
+            { nazwa: "Roof Scoop Roof", cena: 650 },
+            { nazwa: "Right Sideskirt", cena: 950 },
+            { nazwa: "Race Scoop Hood", cena: 2800 },
+            { nazwa: "Worx Scoop Hood", cena: 3000 },
+            { nazwa: "Round Fog Lamp", cena: 550 },
+            { nazwa: "Champ Spoiler", cena: 1000 },
+            { nazwa: "Race Spoiler", cena: 1050 },
+            { nazwa: "Worx Spoiler", cena: 750 },
+            { nazwa: "Left Sideskirt", cena: 950 },
+            { nazwa: "Upswept Exhaust", cena: 600 },
+            { nazwa: "Twin Exhaust", cena: 550 },
+            { nazwa: "Large Exhaust", cena: 650 },
+            { nazwa: "Medium Exhaust", cena: 600 },
+            { nazwa: "Small Exhaust", cena: 600 },
+            { nazwa: "Fury Spoiler", cena: 750 },
+            { nazwa: "Square Fog Lamp", cena: 550 },
+            { nazwa: "Offroad Wheels", cena: 2000 },
+            { nazwa: "Right Alien Sideskirt Sultan", cena: 5500 },
+            { nazwa: "Left Alien Sideskirt Sultan", cena: 5500 },
+            { nazwa: "Alien Exhaust Sultan", cena: 8300 },
+            { nazwa: "X-Flow Exhaust Sultan", cena: 7300 },
+            { nazwa: "Left X-Flow Sideskirt Sultan", cena: 4500 },
+            { nazwa: "Right X-Flow Sideskirt Sultan", cena: 4500 },
+            { nazwa: "Alien Roof Vent Sultan", cena: 2100 },
+            { nazwa: "X-Flow Roof Vent Sultan", cena: 1800 },
+            { nazwa: "Alien Exhaust Elegy", cena: 8500 },
+            { nazwa: "X-Flow Roof Vent Elegy", cena: 2000 },
+            { nazwa: "Right Alien Sideskirt Elegy", cena: 5500 },
+            { nazwa: "X-Flow Exhaust Elegy", cena: 7400 },
+            { nazwa: "Alien Roof Vent Elegy", cena: 2500 },
+            { nazwa: "Left X-Flow Sideskirt Elegy", cena: 4500 },
+            { nazwa: "Left Alien Sideskirt Elegy", cena: 5600 },
+            { nazwa: "Right X-Flow Sideskirt Elegy", cena: 4750 },
+            { nazwa: "Right Chrome Sideskirt Broadway", cena: 1950 },
+            { nazwa: "Slamin Exhaust Broadway", cena: 1200 },
+            { nazwa: "Chrome Exhaust Broadway", cena: 1200 },
+            { nazwa: "X-Flow Exhaust Flash", cena: 1000 },
+            { nazwa: "Alien Exhaust Flash", cena: 1200 },
+            { nazwa: "Right Alien Sideskirt Flash", cena: 1000 },
+            { nazwa: "Right X-Flow Sideskirt Flash", cena: 1150 },
+            { nazwa: "Alien Spoiler Flash", cena: 1350 },
+            { nazwa: "X-Flow Spoiler Flash", cena: 1150 },
+            { nazwa: "Left Alien Sideskirt Flash", cena: 1150 },
+            { nazwa: "Left X-Flow Sideskirt Flash", cena: 950 },
+            { nazwa: "X-Flow Roof Flash", cena: 650 },
+            { nazwa: "Alien Roof Flash", cena: 670 },
+            { nazwa: "Alien Roof Stratum", cena: 550 },
+            { nazwa: "Right Alien Sideskirt Stratum", cena: 750 },
+            { nazwa: "Right X-Flow Sideskirt Stratum", cena: 750 },
+            { nazwa: "Alien Spoiler Stratum", cena: 1150 },
+            { nazwa: "X-Flow Exhaust Stratum", cena: 1300 },
+            { nazwa: "X-Flow Spoiler Stratum", cena: 1050 },
+            { nazwa: "X-Flow Roof Stratum", cena: 650 },
+            { nazwa: "Left Alien Sideskirt Stratum", cena: 1150 },
+            { nazwa: "Left X-Flow Sideskirt Stratum", cena: 950 },
+            { nazwa: "Alien Exhaust Stratum", cena: 1250 },
+            { nazwa: "Alien Exhaust Jester", cena: 9200 },
+            { nazwa: "X-Flow Exhaust Jester", cena: 8050 },
+            { nazwa: "Alien Roof Jester", cena: 3050 },
+            { nazwa: "X-Flow Roof Jester", cena: 2800 },
+            { nazwa: "Right Alien Sideskirt Jester", cena: 6000 },
+            { nazwa: "Right X-Flow Sideskirt Jester", cena: 5150 },
+            { nazwa: "Left Alien Sideskirt Jester", cena: 6150 },
+            { nazwa: "Left X-Flow Sideskirt Jester", cena: 4850 },
+            { nazwa: "Shadow Wheels", cena: 1500 },
+            { nazwa: "Mega Wheels", cena: 1500 },
+            { nazwa: "Rimshine Wheels", cena: 1450 },
+            { nazwa: "Wires Wheels", cena: 2200 },
+            { nazwa: "Classic Wheels", cena: 2500 },
+            { nazwa: "Twist Wheels", cena: 1850 },
+            { nazwa: "Cutter Wheels", cena: 1650 },
+            { nazwa: "Switch Wheels", cena: 1500 },
+            { nazwa: "Grove Wheels", cena: 1850 },
+            { nazwa: "Import Wheels", cena: 1450 },
+            { nazwa: "Dollar Wheels", cena: 2500 },
+            { nazwa: "Trance Wheels", cena: 1850 },
+            { nazwa: "Atomic Wheels", cena: 1450 },
+            { nazwa: "Stereo Wheels", cena: 850 },
+            { nazwa: "Alien Roof Uranus", cena: 2100 },
+            { nazwa: "X-Flow Exhaust Uranus", cena: 7350 },
+            { nazwa: "Right Alien Sideskirt Uranus", cena: 5250 },
+            { nazwa: "X-Flow Roof Uranus", cena: 1550 },
+            { nazwa: "Alien Exhaust Uranus", cena: 8350 },
+            { nazwa: "Right X-Flow Sideskirt Uranus", cena: 4250 },
+            { nazwa: "Left Alien Sideskirt Uranus", cena: 5250 },
+            { nazwa: "Right X-Flow Sideskirt Uranus", cena: 4250 },
+            { nazwa: "Ahab Wheels", cena: 1650 },
+            { nazwa: "Virtual Wheels", cena: 1250 },
+            { nazwa: "Access Wheels", cena: 1850 },
+            { nazwa: "Left Chrome Sideskirt", cena: 1450 },
+            { nazwa: "Chrome Grill Remington", cena: 1450 },
+            { nazwa: "Left Chrome Flames Sideskirt Remington", cena: 1350 },
+            { nazwa: "Left Chrome Strip Sideskirt Savanna", cena: 1250 },
+            { nazwa: "Covertible Roof Savanna Blade", cena: 4250 },
+            { nazwa: "Chrome Exhaust Blade", cena: 2150 },
+            { nazwa: "Slamin Exhaust Blade", cena: 2250 },
+            { nazwa: "Right Chrome Arches Remington", cena: 1250 },
+            { nazwa: "Left Chrome Strip Sideskirt Blade", cena: 1250 },
+            { nazwa: "Right Chrome Strip Sideskirt Blade", cena: 1250 },
+            { nazwa: "Chrome Slamvan", cena: 18250 },
+            { nazwa: "Slamin Slamvan", cena: 17350 },
+            { nazwa: "Chrome Exhaust Slamvan", cena: 35000 },
+            { nazwa: "Slamin Exhaust Slamvan", cena: 35450 },
+            { nazwa: "Chrome Front Bumper Slamvan", cena: 23500 },
+            { nazwa: "Right Chrome Trim Sideskirt Slamvan", cena: 8450 },
+            { nazwa: "Right Wheelcovers Sideskirt Slamvan", cena: 9850 },
+            { nazwa: "Left Chrome Trim Sideskirt Slamvan", cena: 8350 },
+            { nazwa: "Left Wheelcovers Sideskirt Slamvan", cena: 9950 },
+            { nazwa: "Right Chrome Flames Sideskirt Remington", cena: 1250 },
+            { nazwa: "Bullbar Chrome Bars Remington", cena: 1300 },
+            { nazwa: "Left Chrome Arches Sideskirt Remington", cena: 1150 },
+            { nazwa: "Bullbar Chrome Lights Remington", cena: 1650 },
+            { nazwa: "Chrome Exhaust Remington", cena: 3850 },
+            { nazwa: "Slamin Exhaust Remington", cena: 3750 },
+            { nazwa: "Vinyl Hardtop Blade", cena: 3850 },
+            { nazwa: "Chrome Exhaust Savanna", cena: 2000 },
+            { nazwa: "Hardtop Roof Savanna", cena: 3850 },
+            { nazwa: "Softtop Roof Savanna", cena: 3850 },
+            { nazwa: "Slamin Exhaust Savanna", cena: 2000 },
+            { nazwa: "Right Chrome Strip Sideskirt Savanna", cena: 1650 },
+            { nazwa: "Right Chrome Strip Sideskirt Tornado", cena: 1650 },
+            { nazwa: "Slamin Exhaust Tornado", cena: 2100 },
+            { nazwa: "Chrome Exhaust Tornado", cena: 1800 },
+            { nazwa: "Left Chrome Strip Sideskirt Tornado", cena: 1600 },
+            { nazwa: "Alien Spoiler Sultan", cena: 6500 },
+            { nazwa: "X-Flow Spoiler Sultan", cena: 5400 },
+            { nazwa: "X-Flow Rear Bumper Sultan", cena: 9500 },
+            { nazwa: "Alien Rear Bumper Sultan", cena: 10800 },
+            { nazwa: "Left Oval Vents", cena: 800 },
+            { nazwa: "Right Oval Vents", cena: 800 },
+            { nazwa: "Left Square Vents", cena: 650 },
+            { nazwa: "Right Square Vents", cena: 650 },
+            { nazwa: "X-Flow Spoiler Elegy", cena: 5500 },
+            { nazwa: "Alien Spoiler Elegy", cena: 6800 },
+            { nazwa: "X-Flow Rear Bumper Elegy", cena: 9500 },
+            { nazwa: "Alien Rear Bumper Elegy", cena: 11500 },
+            { nazwa: "Alien Rear Bumper Flash", cena: 1500 },
+            { nazwa: "X-Flow Rear Bumper Flash", cena: 1450 },
+            { nazwa: "X-Flow Front Bumper Flash", cena: 1450 },
+            { nazwa: "Alien Front Bumper Flash", cena: 1850 },
+            { nazwa: "Alien Rear Bumper Stratum", cena: 1650 },
+            { nazwa: "Alien Front Bumper Stratum", cena: 1650 },
+            { nazwa: "X-Flow Rear Bumper Stratum", cena: 1500 },
+            { nazwa: "X-Flow Front Bumper Stratum", cena: 1500 },
+            { nazwa: "X-Flow Spoiler Jester", cena: 6250 },
+            { nazwa: "Alien Rear Bumper Jester", cena: 11800 },
+            { nazwa: "Alien Front Bumper Jester", cena: 11800 },
+            { nazwa: "X-Flow Rear Bumper Jester", cena: 10600 },
+            { nazwa: "Alien Spoiler Jester", cena: 7500 },
+            { nazwa: "X-Flow Spoiler Uranus", cena: 5500 },
+            { nazwa: "Alien Spoiler Uranus", cena: 6450 },
+            { nazwa: "X-Flow Front Bumper Uranus", cena: 9400 },
+            { nazwa: "Alien Front Bumper Uranus", cena: 10500 },
+            { nazwa: "X-Flow Rear Bumper Uranus", cena: 9600 },
+            { nazwa: "Alien Rear Bumper Uranus", cena: 10500 },
+            { nazwa: "Alien Front Bumper Sultan", cena: 10900 },
+            { nazwa: "X-Flow Front Bumper Sultan", cena: 9650 },
+            { nazwa: "Alien Front Bumper Elegy", cena: 10950 },
+            { nazwa: "X-Flow Front Bumper Elegy", cena: 9850 },
+            { nazwa: "X-Flow Front Bumper Jester", cena: 9850 },
+            { nazwa: "Chrome Front Bumper Broadway", cena: 1950 },
+            { nazwa: "Slamin Front Bumper Broadway", cena: 1600 },
+            { nazwa: "Chrome Rear Bumper Broadway", cena: 1550 },
+            { nazwa: "Slamin Rear Bumper Broadway", cena: 1600 },
+            { nazwa: "Slamin Rear Bumper Remington", cena: 2800 },
+            { nazwa: "Chrome Front Bumper Remington", cena: 2850 },
+            { nazwa: "Chrome Rear Bumper Remington", cena: 2800 },
+            { nazwa: "Slamin Front Bumper Blade", cena: 2650 },
+            { nazwa: "Chrome Front Bumper Blade", cena: 2600 },
+            { nazwa: "Slamin Rear Bumper Blade", cena: 2800 },
+            { nazwa: "Chrome Rear Bumper Blade", cena: 2850 },
+            { nazwa: "Slamin Front Bumper Remington", cena: 2950 },
+            { nazwa: "Slamin Rear Bumper Savanna", cena: 2850 },
+            { nazwa: "Chrome Rear Bumper Savanna", cena: 3000 },
+            { nazwa: "Slamin Front Bumper Savanna", cena: 2850 },
+            { nazwa: "Chrome Front Bumper Savanna", cena: 2950 },
+            { nazwa: "Slamin Front Bumper Tornado", cena: 1850 },
+            { nazwa: "Chrome Front Bumper Tornado", cena: 1650 },
+            { nazwa: "Chrome Rear Bumper Tornado", cena: 1500 },
+            { nazwa: "Slamin Rear Bumper Tornado", cena: 1850 }
+        ];
+
+        // Funkcja wyszukiwania
+        function szukaj() {
+            const nazwa = document.getElementById('nazwa').value.toLowerCase();
+            const wyniki = produkty.filter(produkt => produkt.nazwa.toLowerCase().includes(nazwa));
+
+            const wynikiContainer = document.getElementById('wyniki');
+            wynikiContainer.innerHTML = ''; // Wyczyść poprzednie wyniki
+
+            if (wyniki.length > 0) {
+                wyniki.forEach(produkt => {
+                    const li = document.createElement('li');
+                    li.textContent = `${produkt.nazwa} - ${produkt.cena} PLN`;
+                    wynikiContainer.appendChild(li);
+                });
+            } else {
+                wynikiContainer.innerHTML = '<li>Brak wyników</li>';
+            }
+        }
+    </script>
+</body>
+</html>
